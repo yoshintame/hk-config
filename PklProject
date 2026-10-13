@@ -1,0 +1,18 @@
+amends "pkl:Project"
+
+package {
+  name = "hk-config"
+  authors { "Mikhail Ivanov <m.ivanov0427@gmail.com>" }
+  version = read?("env:VERSION") ?? "0.0.0-dev"
+  baseUri = "package://github.com/yoshintame/hk-config/releases/download/v\(version)/\(name)"
+  packageZipUrl = "https://github.com/yoshintame/hk-config/releases/download/v\(version)/\(name)@\(version).zip"
+  sourceCode = "https://github.com/yoshintame/hk-config"
+  license = "MIT"
+  description = "Shared hk presets for yoshintame repositories"
+  exclude {
+    "hk.pkl"
+    "mise.toml"
+    "README.md"
+    "renovate.json"
+  }
+}

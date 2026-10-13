@@ -1,0 +1,12 @@
+amends "base.pkl"
+
+import "package://github.com/jdx/hk/releases/download/v2.6.0/hk@2.6.0#/Builtins.pkl"
+
+steps {
+  ["pkl_format"] = Builtins.pkl_format
+  ["presets"] {
+    glob = List("*.pkl")
+    exclude = List("hk.pkl")
+    check = "for f in {{files}}; do HK_FILE=\"$f\" hk validate || exit 1; done"
+  }
+}

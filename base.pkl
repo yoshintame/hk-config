@@ -1,0 +1,28 @@
+amends "package://github.com/jdx/hk/releases/download/v2.6.0/hk@2.6.0#/Config.pkl"
+
+import "package://github.com/jdx/hk/releases/download/v2.6.0/hk@2.6.0#/Builtins.pkl" as baseBuiltins
+
+steps {
+  ["secrets"] = (baseBuiltins.betterleaks) {
+    exclude =
+      List(
+        "**/bun.lock",
+        "**/package-lock.json",
+        "**/pnpm-lock.yaml",
+        "**/uv.lock",
+        "**/flake.lock",
+      )
+  }
+  ["jactionlint"] = baseBuiltins.jactionlint
+  ["trailing_whitespace"] = baseBuiltins.trailing_whitespace
+  ["newlines"] = baseBuiltins.newlines
+  ["merge_conflict"] = baseBuiltins.check_merge_conflict
+}
+
+hooks {
+  ["commit-msg"] {
+    steps {
+      ["conventional"] = baseBuiltins.check_conventional_commit
+    }
+  }
+}
