@@ -1,6 +1,6 @@
 amends "package://github.com/jdx/hk/releases/download/v2.6.0/hk@2.6.0#/Config.pkl"
 
-import "package://github.com/jdx/hk/releases/download/v2.6.0/hk@2.6.0#/Builtins.pkl" as baseBuiltins
+import "builtins.pkl" as baseBuiltins
 
 steps {
   ["secrets"] = (baseBuiltins.betterleaks) {

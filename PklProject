@@ -14,5 +14,7 @@ package {
     "mise.toml"
     "README.md"
     "renovate.json"
+    "scripts/**"
+    "test/**"
   }
 }

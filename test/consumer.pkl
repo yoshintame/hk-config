@@ -1,0 +1,12 @@
+amends "../ts.pkl"
+
+import "../builtins.pkl"
+
+steps {
+  ["oxlint"] {
+    exclude = List("**/generated/**")
+  }
+  ["sort_package_json"] = builtins.sort_package_json
+}
+
+skip_steps = List("merge_conflict")

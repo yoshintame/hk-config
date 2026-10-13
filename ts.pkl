@@ -1,13 +1,14 @@
 amends "base.pkl"
 
-import "package://github.com/jdx/hk/releases/download/v2.6.0/hk@2.6.0#/Builtins.pkl" as tsBuiltins
+import "builtins.pkl" as tsBuiltins
 
 steps {
   ["oxfmt"] = tsBuiltins.oxfmt
   ["oxlint"] = (tsBuiltins.ox_lint) {
     depends = List("oxfmt")
   }
-  ["types"] = (tsBuiltins.tsc) {
+  ["types"] {
+    check = "bun run typecheck"
     profiles = List("slow")
   }
   ["test"] {
