@@ -1,0 +1,8 @@
+amends "ts.pkl"
+
+steps {
+  ["package"] {
+    check = "bun run lint:package"
+    profiles = List("slow")
+  }
+}

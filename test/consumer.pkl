@@ -1,10 +1,10 @@
-amends "../ts.pkl"
+amends "../lib.pkl"
 
 import "../builtins.pkl"
 
 steps {
   ["oxlint"] {
-    exclude = List("**/generated/**")
+    exclude = List("**/fixtures/**")
   }
   ["sort_package_json"] = builtins.sort_package_json
 }
