@@ -1,6 +1,6 @@
-amends "base.pkl"
+amends "pkl/presets/base.pkl"
 
-import "builtins.pkl"
+import "pkl/builtins.pkl"
 
 steps {
   ["pkl_format"] = builtins.pkl_format

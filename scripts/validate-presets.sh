@@ -1,9 +1,6 @@
 #!/bin/sh
 set -eu
 cd "$(dirname "$0")/.."
-for preset in *.pkl test/*.pkl; do
-  case "$preset" in
-    hk.pkl | builtins.pkl) continue ;;
-  esac
+for preset in pkl/presets/*.pkl test/*.pkl; do
   HK_FILE="$preset" hk validate
 done

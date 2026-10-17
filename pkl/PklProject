@@ -9,12 +9,4 @@ package {
   sourceCode = "https://github.com/yoshintame/hk-config"
   license = "MIT"
   description = "Shared hk presets for yoshintame repositories"
-  exclude {
-    "hk.pkl"
-    "mise.toml"
-    "README.md"
-    "renovate.json"
-    "scripts/**"
-    "test/**"
-  }
 }

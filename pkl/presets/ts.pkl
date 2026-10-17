@@ -1,6 +1,6 @@
 amends "base.pkl"
 
-import "builtins.pkl" as tsBuiltins
+import "../builtins.pkl" as tsBuiltins
 
 steps {
   ["oxfmt"] = tsBuiltins.oxfmt

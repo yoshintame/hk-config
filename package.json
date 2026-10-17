@@ -1,0 +1,33 @@
+{
+  "private": true,
+  "release": {
+    "branches": [
+      "main"
+    ],
+    "plugins": [
+      "@semantic-release/commit-analyzer",
+      "@semantic-release/release-notes-generator",
+      [
+        "@semantic-release/exec",
+        {
+          "prepareCmd": "VERSION=${nextRelease.version} pkl project package pkl --output-path .out && rm .out/*.sha256"
+        }
+      ],
+      [
+        "@semantic-release/github",
+        {
+          "assets": [
+            ".out/*"
+          ],
+          "successComment": false,
+          "failComment": false,
+          "releasedLabels": false
+        }
+      ]
+    ]
+  },
+  "devDependencies": {
+    "@semantic-release/exec": "7.1.0",
+    "semantic-release": "25.0.9"
+  }
+}

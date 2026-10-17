@@ -16,3 +16,10 @@ jobs:
     uses: yoshintame/workflows/.github/workflows/ci.yml@fc18ec71da63534238805989c57806ce35e879be # v1.1.2
     permissions:
       contents: read
+
+  release:
+    needs: verify
+    if: github.event_name == 'push'
+    uses: yoshintame/workflows/.github/workflows/release-semantic.yml@fc18ec71da63534238805989c57806ce35e879be # v1.1.2
+    permissions:
+      contents: write

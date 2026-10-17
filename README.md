@@ -4,12 +4,12 @@ Shared [hk](https://hk.jdx.dev) presets for `yoshintame/*` repositories, publish
 
 | Module | Contents |
 |---|---|
-| `base.pkl` | `secrets` (betterleaks, lockfiles excluded), `jactionlint`, `trailing_whitespace`, `newlines`, `merge_conflict`; `commit-msg` checks Conventional Commits |
-| `ts.pkl` | `base.pkl` plus `oxfmt`, `oxlint`; `types` (`bun run typecheck`) and `test` (`bun run test`) in the `slow` profile |
-| `lib.pkl` | `ts.pkl` plus `package` (`bun run lint:package`) in the `slow` profile, for published packages |
+| `presets/base.pkl` | `secrets` (betterleaks, lockfiles excluded), `jactionlint`, `trailing_whitespace`, `newlines`, `merge_conflict`; `commit-msg` checks Conventional Commits |
+| `presets/ts.pkl` | `base.pkl` plus `oxfmt`, `oxlint`; `types` (`bun run typecheck`) and `test` (`bun run test`) in the `slow` profile |
+| `presets/ts-lib.pkl` | `ts.pkl` plus `package` (`bun run lint:package`) in the `slow` profile, for published packages |
 | `builtins.pkl` | hk's builtin steps at the version the presets are built on |
 
-`ts.pkl` and `lib.pkl` target bun projects and call these `package.json` scripts; `lint:package` builds the package itself and checks it, for example with publint and attw.
+`ts.pkl` and `ts-lib.pkl` target bun projects and call these `package.json` scripts; `lint:package` builds the package itself and checks it, for example with publint and attw.
 
 The top-level `steps` create the `check`, `fix` and `pre-commit` hooks; `pre-commit` fixes and stages. CI runs `hk check --all --slow --no-fail-fast`.
 
@@ -18,9 +18,9 @@ The top-level `steps` create the `check`, `fix` and `pre-commit` hooks; `pre-com
 `hk.pkl`:
 
 ```pkl
-amends "package://github.com/yoshintame/hk-config/releases/download/v0.2.0/hk-config@0.2.0#/lib.pkl"
+amends "package://github.com/yoshintame/hk-config/releases/download/v0.3.0/hk-config@0.3.0#/presets/ts-lib.pkl"
 
-import "package://github.com/yoshintame/hk-config/releases/download/v0.2.0/hk-config@0.2.0#/builtins.pkl"
+import "package://github.com/yoshintame/hk-config/releases/download/v0.3.0/hk-config@0.3.0#/builtins.pkl"
 
 steps {
   ["oxlint"] {
@@ -53,6 +53,10 @@ _.path = ["node_modules/.bin"]
 
 Projects reference hk only through `hk` in `mise.toml`: the hk schema and builtins come from this package. hk 2.x runs presets built on an earlier 2.x schema; a new hk schema arrives as a new `hk-config` release.
 
+## Layout
+
+`pkl/` is the Pkl project root and holds only what ships: `PklProject`, `builtins.pkl` and `presets/`. Everything else configures this repository: `hk.pkl` checks it with `presets/base.pkl`, `test/consumer.pkl` is the usage example above.
+
 ## Writing presets
 
 hk evaluates Pkl with its built-in `pklr`, which covers only part of the Pkl standard library:
@@ -62,8 +66,8 @@ hk evaluates Pkl with its built-in `pklr`, which covers only part of the Pkl sta
 
 Presets never set `skip_steps`: a project assigning its own list would silently replace it.
 
-`scripts/validate-presets.sh` runs `hk validate` on every preset and on `test/consumer.pkl`, the usage example above; `hk check` runs it on any `.pkl` change.
+`scripts/validate-presets.sh` runs `hk validate` on every preset and on `test/consumer.pkl`; `hk check` runs it on any `.pkl` change.
 
 ## Release
 
-Push a `vX.Y.Z` tag. The `Release` workflow validates the presets, runs `pkl project package` with the version from the tag and attaches the package metadata and zip to the GitHub release.
+Every push to `main` runs the shared `release-semantic.yml` from `yoshintame/workflows` after the checks. semantic-release takes the version from Conventional Commits, `@semantic-release/exec` runs `pkl project package pkl`, and the package metadata and zip are attached to the GitHub release. `package.json` exists only for this: the release tools stay pinned by `bun.lock`.

@@ -1,6 +1,6 @@
-amends "../lib.pkl"
+amends "../pkl/presets/ts-lib.pkl"
 
-import "../builtins.pkl"
+import "../pkl/builtins.pkl"
 
 steps {
   ["oxlint"] {
