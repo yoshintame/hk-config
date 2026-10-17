@@ -6,7 +6,7 @@ steps {
   ["oxlint"] {
     exclude = List("**/fixtures/**")
   }
-  ["sort_package_json"] = builtins.sort_package_json
+  ["shellcheck"] = builtins.shellcheck
 }
 
 skip_steps = List("merge_conflict")

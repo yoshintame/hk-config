@@ -2,6 +2,10 @@ amends "base.pkl"
 
 import "../builtins.pkl" as tsBuiltins
 
+env {
+  ["PATH"] = "node_modules/.bin:\(read("env:PATH"))"
+}
+
 steps {
   ["oxfmt"] = tsBuiltins.oxfmt
   ["oxlint"] = (tsBuiltins.ox_lint) {

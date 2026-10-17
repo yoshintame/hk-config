@@ -15,18 +15,18 @@ The top-level `steps` create the `check`, `fix` and `pre-commit` hooks; `pre-com
 
 ## Usage
 
-`hk.pkl`:
+`hk.pkl` (the same file is validated in CI as `test/consumer.pkl`):
 
 ```pkl
-amends "package://github.com/yoshintame/hk-config/releases/download/v0.3.0/hk-config@0.3.0#/presets/ts-lib.pkl"
+amends "package://github.com/yoshintame/hk-config/releases/download/v0.4.0/hk-config@0.4.0#/presets/ts-lib.pkl"
 
-import "package://github.com/yoshintame/hk-config/releases/download/v0.3.0/hk-config@0.3.0#/builtins.pkl"
+import "package://github.com/yoshintame/hk-config/releases/download/v0.4.0/hk-config@0.4.0#/builtins.pkl"
 
 steps {
   ["oxlint"] {
     exclude = List("**/fixtures/**")
   }
-  ["sort_package_json"] = builtins.sort_package_json
+  ["shellcheck"] = builtins.shellcheck
 }
 
 skip_steps = List("merge_conflict")
@@ -42,13 +42,10 @@ hk = "2.6.0"
 jactionlint = "2.1.0"
 node = "24.21.0"
 shellcheck = "0.11.0"
-
-[env]
-_.path = ["node_modules/.bin"]
 ```
 
 - Override an inherited step by its name, add steps the same way, and turn one off with `skip_steps`, for example `skip_steps = List("test")` in a project without tests.
-- `base.pkl` needs `hk`, `betterleaks`, `jactionlint` and `shellcheck`; `ts.pkl` adds `node` and `bun`. `oxfmt` and `oxlint` are `devDependencies`, reached through `node_modules/.bin`.
+- `base.pkl` needs `hk`, `betterleaks`, `jactionlint` and `shellcheck`; `ts.pkl` adds `node` and `bun`. `oxfmt` and `oxlint` are `devDependencies`: `ts.pkl` puts `node_modules/.bin` in front of `PATH` for its steps only, so the shell and CI jobs never resolve commands from `node_modules`.
 - Install the git hooks once per clone with `hk install --mise`; linked worktrees share them. Git 2.54+ can instead run `hk install --global --mise` once per machine.
 
 Projects reference hk only through `hk` in `mise.toml`: the hk schema and builtins come from this package. hk 2.x runs presets built on an earlier 2.x schema; a new hk schema arrives as a new `hk-config` release.
