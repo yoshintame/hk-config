@@ -2,14 +2,17 @@ amends "base.pkl"
 
 import "../builtins.pkl" as tsBuiltins
 
-env {
+local nodeModulesPath = new Mapping<String, String> {
   ["PATH"] = "node_modules/.bin:\(read("env:PATH"))"
 }
 
 steps {
-  ["oxfmt"] = tsBuiltins.oxfmt
+  ["oxfmt"] = (tsBuiltins.oxfmt) {
+    env = nodeModulesPath
+  }
   ["oxlint"] = (tsBuiltins.ox_lint) {
     depends = List("oxfmt")
+    env = nodeModulesPath
   }
   ["types"] {
     check = "bun run typecheck"

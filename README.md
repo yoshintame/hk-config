@@ -45,7 +45,7 @@ shellcheck = "0.11.0"
 ```
 
 - Override an inherited step by its name, add steps the same way, and turn one off with `skip_steps`, for example `skip_steps = List("test")` in a project without tests.
-- `base.pkl` needs `hk`, `betterleaks`, `jactionlint` and `shellcheck`; `ts.pkl` adds `node` and `bun`. `oxfmt` and `oxlint` are `devDependencies`: `ts.pkl` puts `node_modules/.bin` in front of `PATH` for its steps only, so the shell and CI jobs never resolve commands from `node_modules`.
+- `base.pkl` needs `hk`, `betterleaks`, `jactionlint` and `shellcheck`; `ts.pkl` adds `node` and `bun`. `oxfmt` and `oxlint` are `devDependencies`: `ts.pkl` puts `node_modules/.bin` in front of `PATH` for the `oxfmt` and `oxlint` steps only, so hk itself, its `git` calls, the other steps and CI jobs never resolve commands from `node_modules`, where any dependency may ship a bin named `git` or `betterleaks`.
 - Install the git hooks once per clone with `hk install --mise`; linked worktrees share them. Git 2.54+ can instead run `hk install --global --mise` once per machine.
 
 Projects reference hk only through `hk` in `mise.toml`: the hk schema and builtins come from this package. hk 2.x runs presets built on an earlier 2.x schema; a new hk schema arrives as a new `hk-config` release.
