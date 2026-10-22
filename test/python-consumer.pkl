@@ -1,0 +1,9 @@
+amends "../pkl/presets/python.pkl"
+
+steps {
+  ["ruff"] {
+    exclude = List("**/migrations/**")
+  }
+}
+
+skip_steps = List("test")

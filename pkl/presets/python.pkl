@@ -1,0 +1,25 @@
+amends "base.pkl"
+
+import "../builtins.pkl" as pythonBuiltins
+
+local venvPath = new Mapping<String, String> {
+  ["PATH"] = ".venv/bin:\(read("env:PATH"))"
+}
+
+steps {
+  ["ruff"] = (pythonBuiltins.ruff) {
+    env = venvPath
+  }
+  ["ruff_format"] = (pythonBuiltins.ruff_format) {
+    depends = List("ruff")
+    env = venvPath
+  }
+  ["types"] {
+    check = "uv run --frozen pyright"
+    profiles = List("slow")
+  }
+  ["test"] {
+    check = "uv run --frozen pytest -q"
+    profiles = List("slow")
+  }
+}
