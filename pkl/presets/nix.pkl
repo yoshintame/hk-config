@@ -1,0 +1,24 @@
+amends "base.pkl"
+
+local formatter =
+  #"$(nix build --no-link --print-out-paths ".#formatter.$(nix eval --impure --raw --expr builtins.currentSystem)")/bin/treefmt"#
+
+steps {
+  ["treefmt"] {
+    glob = List("**/*.nix")
+    check =
+      #"""
+      treefmt=\#(formatter)
+      status=0
+      for file in {{ files }}; do
+        "$treefmt" -q --stdin "$file" < "$file" | cmp -s - "$file" || { echo "$file is not formatted, run nix fmt"; status=1; }
+      done
+      exit $status
+      """#
+    fix = "nix fmt -- -q {{ files }}"
+  }
+  ["flake"] {
+    check = "nix flake check"
+    profiles = List("slow")
+  }
+}

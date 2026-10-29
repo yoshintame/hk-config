@@ -1,0 +1,7 @@
+amends "../pkl/presets/nix.pkl"
+
+steps {
+  ["flake"] {
+    check = "nix flake check --impure"
+  }
+}
