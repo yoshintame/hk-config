@@ -1,0 +1,8 @@
+amends "../pkl/presets/svelte.pkl"
+
+steps {
+  ["depscheck"] {
+    check = "bun run depscheck"
+    profiles = List("slow")
+  }
+}

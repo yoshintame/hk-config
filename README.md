@@ -7,11 +7,12 @@ Shared [hk](https://hk.jdx.dev) presets for `yoshintame/*` repositories, publish
 | `presets/base.pkl` | `secrets` (betterleaks, lockfiles excluded), `jactionlint`, `trailing_whitespace`, `newlines`, `merge_conflict`; `commit-msg` checks Conventional Commits |
 | `presets/ts.pkl` | `base.pkl` plus `oxfmt`, `oxlint`; `types` (`bun run typecheck`) and `test` (`bun run test`) in the `slow` profile |
 | `presets/ts-lib.pkl` | `ts.pkl` plus `package` (`bun run lint:package`) in the `slow` profile, for published packages |
+| `presets/svelte.pkl` | `ts.pkl` with `**/*.svelte` added to the `oxfmt` glob, plus `build` (`bun run build`) in the `slow` profile, for SvelteKit projects |
 | `presets/nix.pkl` | `base.pkl` plus `treefmt` (the flake's formatter); `flake` (`nix flake check`) in the `slow` profile |
 | `presets/python.pkl` | `base.pkl` plus `ruff`, `ruff_format`; `types` (`uv run --frozen pyright`) and `test` (`uv run --frozen pytest -q`) in the `slow` profile |
 | `builtins.pkl` | hk's builtin steps at the version the presets are built on |
 
-`ts.pkl` and `ts-lib.pkl` target bun projects and call these `package.json` scripts; `lint:package` builds the package itself and checks it, for example with publint and attw.
+`ts.pkl`, `ts-lib.pkl` and `svelte.pkl` target bun projects and call these `package.json` scripts; `lint:package` builds the package itself and checks it, for example with publint and attw.
 
 The top-level `steps` create the `check`, `fix` and `pre-commit` hooks; `pre-commit` fixes and stages. CI runs `hk check --all --slow --no-fail-fast`.
 
@@ -48,6 +49,7 @@ shellcheck = "0.11.0"
 
 - Override an inherited step by its name, add steps the same way, and turn one off with `skip_steps`, for example `skip_steps = List("test")` in a project without tests.
 - `base.pkl` needs `hk`, `betterleaks`, `jactionlint` and `shellcheck`; `ts.pkl` adds `node` and `bun`. `oxfmt` and `oxlint` are `devDependencies`: `ts.pkl` puts `node_modules/.bin` in front of `PATH` for the `oxfmt` and `oxlint` steps only, so hk itself, its `git` calls, the other steps and CI jobs never resolve commands from `node_modules`, where any dependency may ship a bin named `git` or `betterleaks`.
+- `svelte.pkl` targets SvelteKit projects. hk's builtin `oxfmt` step leaves `*.svelte` out of its glob, so the preset adds it; oxfmt formats `.svelte` files only with its `svelte` option on and the `svelte` package installed: without `oxfmt({ svelte: true })` from `@yoshintame/ox-config` it silently matches no `.svelte` file, so they go unchecked. The builtin `oxlint` glob already covers `.svelte`. `types` runs `bun run typecheck`, which in a SvelteKit project is `svelte-check`. `build` runs `bun run build`, so CI fails on a broken build or prerender that the type check does not see; it depends on `types`, because both regenerate `.svelte-kit` through `svelte-kit sync` and race when run in parallel.
 - `python.pkl` targets uv projects with `ruff`, `pyright` and `pytest` in the dev dependency group: it puts `.venv/bin` in front of `PATH` for the `ruff` and `ruff_format` steps only, for the same reason as `ts.pkl`, so run `uv sync` before `hk check`. It needs `uv` and `python` in `mise.toml` besides the `base.pkl` tools.
 - `nix.pkl` targets flakes whose `formatter` is a treefmt wrapper, as treefmt-nix provides. treefmt has no read-only mode, so the check builds `.#formatter.<system>` once and compares every file with `treefmt --stdin`; the fix runs `nix fmt`. It needs `nix` on `PATH`; a flake that needs `--impure` overrides the `flake` step's `check`.
 - Install the git hooks once per clone with `hk install --mise`; linked worktrees share them. Git 2.54+ can instead run `hk install --global --mise` once per machine.
@@ -56,7 +58,7 @@ Projects reference hk only through `hk` in `mise.toml`: the hk schema and builti
 
 ## Layout
 
-`pkl/` is the Pkl project root and holds only what ships: `PklProject`, `builtins.pkl` and `presets/`. Everything else configures this repository: `hk.pkl` checks it with `presets/base.pkl`, `test/consumer.pkl` is the usage example above, `test/python-consumer.pkl` and `test/nix-consumer.pkl` the same for `python.pkl` and `nix.pkl`.
+`pkl/` is the Pkl project root and holds only what ships: `PklProject`, `builtins.pkl` and `presets/`. Everything else configures this repository: `hk.pkl` checks it with `presets/base.pkl`, `test/consumer.pkl` is the usage example above, `test/svelte-consumer.pkl`, `test/python-consumer.pkl` and `test/nix-consumer.pkl` the same for `svelte.pkl`, `python.pkl` and `nix.pkl`.
 
 ## Writing presets
 

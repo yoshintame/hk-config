@@ -1,0 +1,12 @@
+amends "ts.pkl"
+
+steps {
+  ["oxfmt"] {
+    glob = (super.glob as List<String>) + List("**/*.svelte")
+  }
+  ["build"] {
+    check = "bun run build"
+    depends = List("types")
+    profiles = List("slow")
+  }
+}
